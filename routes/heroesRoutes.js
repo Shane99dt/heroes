@@ -47,16 +47,25 @@ app.post('/', (req, res) => {
   }
 
   const existingHero = heroes.find(hero => {
-    return hero.slug === req.params.slug
+    return hero.slug === slug
   })
 
   if(!existingHero){
     heroes.push(hero)
-
     res.status(201).json(hero)
   }else{
     res.status(409).json('Hero already exists')
   }
+})
+
+// Put
+app.put('/:slug/powers', verifyHero, (req, res) => {
+  console.log('put')
+  const {slug} = req.params
+  const findHero = heroes.find(hero => {
+    return (hero.slug === slug)
+  })
+  console.log(powers)
 })
 
 
