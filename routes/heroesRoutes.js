@@ -75,6 +75,13 @@ app.put('/:slug/powers', verifyHero, (req, res) => {
   }
 })
 
+// put edit hero
+app.put('/:slug', verifyHero, (req, res) =>{
+  const {editedHero} = req.body
+  heroes[req.heroIndex] = editedHero
+  res.status(201).json(`${editedHero.name} edited successfully`)
+})
+
 
 // delete
 // delete hero
