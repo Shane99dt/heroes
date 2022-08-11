@@ -88,8 +88,18 @@ app.put('/:slug', verifyHero, (req, res) =>{
     age: age,
     image: image
   }
-  heroes[req.heroIndex] = editedHero
-  res.status(201).json(`${editedHero.name} edited successfully`)
+
+  const existingHero = heroes.find(hero => {
+    return hero.slug === slug
+  })
+
+  if(!existingHero){
+    heroes[req.heroIndex] = editedHero
+    res.status(201).json(`${editedHero.name} edited successfully`)
+  }else{
+    res.status(409).json(`${slug} already exists. Please use a different slug`)
+  }
+
 })
 
 
