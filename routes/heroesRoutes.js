@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const heroes = require('../heroes')
-const { verifyHero } = require('../middlewares/heroesMW')
+const { verifyHero, verifyPower } = require('../middlewares/heroesMW')
 
 
 app.get('/', (req, res) => {
@@ -39,7 +39,7 @@ app.post('/', (req, res) => {
   const hero = {
     slug : slug,
     name : name,
-    power: [power],
+    power: power,
     color: color,
     isAlive: isAlive,
     age: age,
@@ -60,13 +60,38 @@ app.post('/', (req, res) => {
 
 // Put
 app.put('/:slug/powers', verifyHero, (req, res) => {
-  console.log('put')
-  const {slug} = req.params
-  const findHero = heroes.find(hero => {
-    return (hero.slug === slug)
+  const {newPower} = req.body
+  const {power} = req.hero
+
+  const existingPower = power.find(item => {
+    return item === newPower
   })
-  console.log(powers)
+
+  if(!existingPower){
+    power.push(newPower)
+    res.status(201).json(power)
+  }else{
+    res.status(409).json('Power already exists')
+  }
 })
+
+
+// delete
+// delete hero
+app.delete('/:slug', verifyHero, (req, res) => {
+
+  heroes.splice(req.heroIndex, 1)
+  res.json(`${req.hero.name} has been deleted`)
+})
+
+// delete a power
+app.delete('/:slug/power/:power', verifyHero, verifyPower, (req, res) => {
+  const {power, name} = req.hero
+  power.splice(req.powerIndex, 1)
+  res.json(`The power ${req.params.power} has been successfully erased from ${name}`)
+})
+
+
 
 
 

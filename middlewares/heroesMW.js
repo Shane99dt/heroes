@@ -17,7 +17,29 @@ const verifyHero = (req, res, next) => {
     req.heroIndex = heroIndex
     next()
   }
-
 }
 
-module.exports = {verifyHero}
+const verifyPower = (req, res, next) => {
+  const {slug, power} = req.params
+  const hero = heroes.find(hero => {
+    return hero.slug === slug
+  })
+
+  const choosenPower = hero.power.find(item => {
+    return item === power
+  })
+
+  const powerIndex = hero.power.findIndex(item => {
+    return item === power
+  })
+
+  if(!choosenPower){
+    res.status(404).json('Not Found!')
+  }else{
+    req.choosenPower = choosenPower
+    req.powerIndex = powerIndex
+    next()
+  }
+}
+
+module.exports = {verifyHero, verifyPower}
