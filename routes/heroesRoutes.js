@@ -77,7 +77,17 @@ app.put('/:slug/powers', verifyHero, (req, res) => {
 
 // put edit hero
 app.put('/:slug', verifyHero, (req, res) =>{
-  const {editedHero} = req.body
+
+  const {slug, name, power, color, isAlive, age, image} = req.body
+  const editedHero = {
+    slug : slug,
+    name : name,
+    power: power,
+    color: color,
+    isAlive: isAlive,
+    age: age,
+    image: image
+  }
   heroes[req.heroIndex] = editedHero
   res.status(201).json(`${editedHero.name} edited successfully`)
 })
