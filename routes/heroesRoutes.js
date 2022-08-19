@@ -93,13 +93,12 @@ app.put('/:slug', verifyHero, (req, res) =>{
     return hero.slug === slug
   })
 
-  if(!existingHero){
+  if(!existingHero || req.hero.slug === slug){
     heroes[req.heroIndex] = editedHero
     res.status(201).json(`${editedHero.name} edited successfully`)
   }else{
     res.status(409).json(`${slug} already exists. Please use a different slug`)
   }
-
 })
 
 
