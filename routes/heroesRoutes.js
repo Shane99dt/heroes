@@ -37,7 +37,7 @@ app.post('/', (req, res) => {
   const {slug, name, power, color, isAlive, age, image} = req.body
 
   const hero = {
-    slug : slug,
+    slug : slug.toLowerCase(),
     name : name,
     power: power,
     color: color,
@@ -79,8 +79,9 @@ app.put('/:slug/powers', verifyHero, (req, res) => {
 app.put('/:slug', verifyHero, (req, res) =>{
 
   const {slug, name, power, color, isAlive, age, image} = req.body
+  const sluglow = slug.toLowerCase()
   const editedHero = {
-    slug : slug,
+    slug : sluglow,
     name : name,
     power: power,
     color: color,
@@ -90,10 +91,10 @@ app.put('/:slug', verifyHero, (req, res) =>{
   }
 
   const existingHero = heroes.find(hero => {
-    return hero.slug === slug
+    return hero.slug === sluglow
   })
 
-  if(!existingHero || req.hero.slug === slug){
+  if(!existingHero || req.hero.slug === sluglow){
     heroes[req.heroIndex] = editedHero
     res.status(201).json(`${editedHero.name} edited successfully`)
   }else{
