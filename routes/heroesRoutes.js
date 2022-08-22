@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const heroes = require('../heroes')
-const { verifyHero, verifyPower } = require('../middlewares/heroesMW')
+const { verifyHero, verifyPower, checkIfHeroExists, verifyHeroEdit } = require('../middlewares/heroesMW')
 
 
 app.get('/', (req, res) => {
@@ -9,53 +9,26 @@ app.get('/', (req, res) => {
 })
 
 app.get('/:slug', verifyHero, (req, res) => {
-
-  const {slug} = req.params
-
-  const findHero = heroes.find(hero => {
-    return hero.slug === slug
-  })
-
-  res.json(findHero)
+  res.json(req.hero)
 })
 
 
 app.get('/:slug/powers', verifyHero, (req, res) => {
-  const {slug} = req.params
-
-  const findHero = heroes.find(hero => {
-    return hero.slug === slug
-  })
-
-  res.json(findHero.power)
+  res.json(req.hero.power)
 })
 
 
 // post
-app.post('/', (req, res) => {
-
-  const {slug, name, power, color, isAlive, age, image} = req.body
+app.post('/',verifyHeroEdit, checkIfHeroExists, (req, res) => {
 
   const hero = {
-    slug : slug.toLowerCase(),
-    name : name,
-    power: power,
-    color: color,
-    isAlive: isAlive,
-    age: age,
-    image: image
+    ...req.body,
+    slug: req.body.name.toLowerCase().replaceAll(' ', '-')
   }
 
-  const existingHero = heroes.find(hero => {
-    return hero.slug === slug
-  })
+  heroes.push(hero)
+  res.status(201).json(hero)
 
-  if(!existingHero){
-    heroes.push(hero)
-    res.status(201).json(hero)
-  }else{
-    res.status(409).json('Hero already exists')
-  }
 })
 
 // Put
@@ -78,28 +51,16 @@ app.put('/:slug/powers', verifyHero, (req, res) => {
 // put edit hero
 app.put('/:slug', verifyHero, (req, res) =>{
 
-  const {slug, name, power, color, isAlive, age, image} = req.body
-  const sluglow = slug.toLowerCase()
+  const sluglow = req.body.name.toLowerCase().replaceAll(' ', '-')
+
   const editedHero = {
-    slug : sluglow,
-    name : name,
-    power: power,
-    color: color,
-    isAlive: isAlive,
-    age: age,
-    image: image
+    ...req.hero,
+    ...req.body,
+    slug : sluglow
   }
 
-  const existingHero = heroes.find(hero => {
-    return hero.slug === sluglow
-  })
-
-  if(!existingHero || req.hero.slug === sluglow){
-    heroes[req.heroIndex] = editedHero
-    res.status(201).json(`${editedHero.name} edited successfully`)
-  }else{
-    res.status(409).json(`${slug} already exists. Please use a different slug`)
-  }
+  heroes[req.heroIndex] = editedHero
+  res.status(201).json(`${editedHero.name} edited successfully`)
 })
 
 
