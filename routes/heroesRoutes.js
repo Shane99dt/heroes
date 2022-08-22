@@ -69,7 +69,7 @@ app.put('/:slug', verifyHero, (req, res) =>{
 app.delete('/:slug', verifyHero, (req, res) => {
 
   heroes.splice(req.heroIndex, 1)
-  res.json(`${req.hero.name} has been deleted`)
+  res.json(`${req.hero.name} has been deleted`).status(204)
 })
 
 // delete a power
